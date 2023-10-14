@@ -1,13 +1,8 @@
 const candyList = document.getElementById("candyList");
 const addCandyButton = document.getElementById("addCandy");
 
-// Load candies from local storage when the page loads
-window.addEventListener("load", function () {
-    const savedCandies = JSON.parse(localStorage.getItem("candies")) || [];
-    savedCandies.forEach(function (candy) {
-        createCandyListItem(candy);
-    });
-});
+
+
 
 addCandyButton.addEventListener("click", function () {
     const candyName = document.getElementById("candyName").value;
@@ -23,10 +18,17 @@ addCandyButton.addEventListener("click", function () {
             quantity: candyQuantity,
         };
 
-        createCandyListItem(candy);
+        axios.post('https://crudcrud.com/api/377db030f3004ff18ce1f423c03445d4/candyshop', candy)
+            .then(response => {
+               
+                console.log('Candy item created:', response.data);
+                createCandyListItem(response.data); 
+            })
+            .catch(error => {
+                console.error('Error creating candy item:', error);
+            });
 
-        // Save the candy to local storage
-        saveCandyToLocalStorage(candy);
+        
 
         document.getElementById("candyName").value = "";
         document.getElementById("candyDescription").value = "";
@@ -57,24 +59,8 @@ function createCandyListItem(candy) {
             <button class="buy" data-amount="2">Buy Two</button>
             <button class="buy" data-amount="3">Buy Three</button>`;
 
-            // Update the candy in local storage
-            updateCandyInLocalStorage(candy);
+           
         });
-    }
-}
-
-function saveCandyToLocalStorage(candy) {
-    const savedCandies = JSON.parse(localStorage.getItem("candies")) || [];
-    savedCandies.push(candy);
-    localStorage.setItem("candies", JSON.stringify(savedCandies));
-}
-
-function updateCandyInLocalStorage(candy) {
-    const savedCandies = JSON.parse(localStorage.getItem("candies")) || [];
-    const index = savedCandies.findIndex((c) => c.name === candy.name);
-    if (index !== -1) {
-        savedCandies[index] = candy;
-        localStorage.setItem("candies", JSON.stringify(savedCandies));
     }
 }
 
